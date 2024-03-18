@@ -1,0 +1,1 @@
+aASKio is a RAG application made using gemini,langchain,Qdrant and streamlit,capable of querying PDF,text,docx files and even youtube videos and websites.It is an AI interactive conversational and chat platform
