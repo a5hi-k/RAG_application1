@@ -377,7 +377,7 @@ if  __name__ == "__main__":
                 st.warning("Invalid api key!")                
     
     try:
-                    if 'vs' in st.session_state: 
+                     
                         llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
                         
                         vector_store = st.session_state.vs
