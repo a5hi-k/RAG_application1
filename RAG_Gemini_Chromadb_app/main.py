@@ -156,10 +156,21 @@ def generate_audio(text):
 
 
 
-
 def ask_question(q,chain):
     result = chain.invoke({'question':q})
     return result
+
+
+
+
+def clear_history():
+    if 'history' in st.session_state:
+        del st.session_state['history']
+
+
+
+
+
 
 
 
@@ -212,7 +223,7 @@ if  __name__ == "__main__":
 
         youtube_link = st.text_input("Paste YouTube or website Link Here ")
        
-        add_data = st.button('Submit data') 
+        add_data = st.button('Submit data',on_click=clear_history) 
 
         if (uploaded_file and add_data) or (youtube_link and add_data):
             
@@ -366,106 +377,106 @@ if  __name__ == "__main__":
                 st.warning("Invalid api key!")                
     
     try:
-
-                    llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
-                    
-                    vector_store = st.session_state.vs
-                    retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 5})
-                    
-                    memory = ConversationBufferMemory(memory_key='chat_history',return_messages=True)
-                
-
-
-                    system_template = r'''
-
-                    Use the following pieces of context to answer the user's question.
-
-                    Context:```{context}```
-
-                    '''
-
-
-                    user_template = '''
-
-                    Question: ```{question}```
-                    Chat History: ```{chat_history}```
-                    '''
-
-                    messages = [
-                        SystemMessagePromptTemplate.from_template(system_template),
-                        HumanMessagePromptTemplate.from_template(user_template)
-                    ]
-
-                
-                    qa_prompt = ChatPromptTemplate.from_messages(messages)
-
-                
-
-                    crc = ConversationalRetrievalChain.from_llm(
-                        llm = llm,
-                        retriever = retriever,
-                        memory = memory,
-                        chain_type='stuff',  
-                        combine_docs_chain_kwargs={'prompt':qa_prompt},
-                        verbose=True
+                    if 'vs' in st.session_state: 
+                        llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
                         
-                        )
+                        vector_store = st.session_state.vs
+                        retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 5})
+                        
+                        memory = ConversationBufferMemory(memory_key='chat_history',return_messages=True)
                     
+
+
+                        system_template = r'''
+
+                        Use the following pieces of context to answer the user's question.
+
+                        Context:```{context}```
+
+                        '''
+
+
+                        user_template = '''
+
+                        Question: ```{question}```
+                        Chat History: ```{chat_history}```
+                        '''
+
+                        messages = [
+                            SystemMessagePromptTemplate.from_template(system_template),
+                            HumanMessagePromptTemplate.from_template(user_template)
+                        ]
+
                     
-                    audio = st.radio("AI voice assistant", ("ON", "OFF"))
+                        qa_prompt = ChatPromptTemplate.from_messages(messages)
 
-                    question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
+                    
 
-                    col1, col2 =st.columns([2,12])
-
-                    with col1:
-                        ans = st.button("Answer")
-                    with col2:
-                        # audi = st.button("Tap and Ask")  
-                        audi = audio_recorder()
-
-                    # if ans or audi:
-
-                    if ans:
-
-                        with st.spinner('Generating answer........'):
-                                
-                            answer = ask_question(question,crc)
+                        crc = ConversationalRetrievalChain.from_llm(
+                            llm = llm,
+                            retriever = retriever,
+                            memory = memory,
+                            chain_type='stuff',  
+                            combine_docs_chain_kwargs={'prompt':qa_prompt},
+                            verbose=True
                             
+                            )
+                        
+                        
+                        audio = st.radio("AI voice assistant", ("ON", "OFF"))
 
-                    elif audi:
+                        question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
 
-                        recorded_file = "RAG_Gemini_Chromadb_app/record.mp3"
-                        with open(recorded_file,"wb") as f:
-                            f.write(audi)
+                        col1, col2 =st.columns([2,12])
 
-                        #     with st.spinner('Listening..........'):
+                        with col1:
+                            ans = st.button("Answer")
+                        with col2:
+                            # audi = st.button("Tap and Ask")  
+                            audi = audio_recorder()
 
-                        #         # st.write('Listining.......')
-                        question = speech_to_text()
+                        # if ans or audi:
 
-                        st.write(question)
+                        if ans:
 
-                        with st.spinner('Generating answer.........'):
+                            with st.spinner('Generating answer........'):
+                                    
+                                answer = ask_question(question,crc)
+                                
 
-                            answer = ask_question(question,crc)
+                        elif audi:
 
-                    if audio == "ON":
+                            recorded_file = "RAG_Gemini_Chromadb_app/record.mp3"
+                            with open(recorded_file,"wb") as f:
+                                f.write(audi)
 
-                        st.text_area('Answer : ',value=answer["answer"],height=200)
-                        generate_audio(answer["answer"])
+                            #     with st.spinner('Listening..........'):
 
-                    else:
+                            #         # st.write('Listining.......')
+                            question = speech_to_text()
 
-                        st.text_area('Answer : ',value=answer["answer"],height=200) 
+                            st.write(question)
 
-                    st.divider()
-                    if 'history' not in st.session_state:
-                        st.session_state.history = '' 
-                    value = f'Q : {question} \nA : {answer["answer"]}'
-                    st.session_state.history = f'{value} \n {"--"*64} \n {st.session_state.history}'
-                    h = st.session_state.history  
-                    st.text_area(label='Chat History',value=h,key='history',height=500)  
+                            with st.spinner('Generating answer.........'):
+
+                                answer = ask_question(question,crc)
+
+                        if audio == "ON":
+
+                            st.text_area('Answer : ',value=answer["answer"],height=200)
+                            generate_audio(answer["answer"])
+
+                        else:
+
+                            st.text_area('Answer : ',value=answer["answer"],height=200) 
+
+                        st.divider()
+                        if 'history' not in st.session_state:
+                            st.session_state.history = '' 
+                        value = f'Q : {question} \nA : {answer["answer"]}'
+                        st.session_state.history = f'{value} \n {"--"*64} \n {st.session_state.history}'
+                        h = st.session_state.history  
+                        st.text_area(label='Chat History',value=h,key='history',height=500)  
 
 
     except:
