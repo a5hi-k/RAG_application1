@@ -148,7 +148,7 @@ def generate_audio(text):
         audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
         audio_tag = f'<audio src="data:audio/mp3;base64,{audio_base64}" controls autoplay>'
         st.markdown(audio_tag, unsafe_allow_html=True)
-        os.remove("RAG_Gemini_Chromadb_app/output.mp3")
+        
     except:
         print('failed')
         pass
@@ -216,6 +216,8 @@ if  __name__ == "__main__":
     unsafe_allow_html=True
     )
 
+
+
     
     st.write('<span style="font-size:8vw; font-weight:bolder; margin-left:-7vw; background: linear-gradient(45deg, #2c3e50, #4ca1af); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">aASKio', unsafe_allow_html=True)
 
@@ -224,6 +226,7 @@ if  __name__ == "__main__":
 
 
     with st.sidebar:
+        st.write('<span style="color:red; font-weight:bolder;">Beta version:,not ideal for mobile use', unsafe_allow_html=True)
         st.write('<span style="color:green; font-weight:bolder;">Try for free!,without your api_key', unsafe_allow_html=True)
         st.write('<span style="color:green; font-weight:bolder;">In case of error get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)', unsafe_allow_html=True)
         API_KEY = st.text_input('Your Gemini API key  ',type='password')
@@ -391,108 +394,108 @@ if  __name__ == "__main__":
     
     try:
                      
-                    llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
-                        
-                    vector_store = st.session_state.vs
-                    retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 5})
-                        
-                    memory = ConversationBufferMemory(memory_key='chat_history',return_messages=True)
-                    
-
-
-                    system_template = r'''
-
-                    Use the following pieces of context to answer the user's question.
-
-                    Context:```{context}```
-
-                    '''
-
-
-                    user_template = '''
-
-                    Question: ```{question}```
-                    Chat History: ```{chat_history}```
-                    '''
-
-                    messages = [
-                        SystemMessagePromptTemplate.from_template(system_template),
-                        HumanMessagePromptTemplate.from_template(user_template)
-                    ]
-
-                    
-                    qa_prompt = ChatPromptTemplate.from_messages(messages)
-
-                    
-
-                    crc = ConversationalRetrievalChain.from_llm(
-                        llm = llm,
-                        retriever = retriever,
-                        memory = memory,
-                        chain_type='stuff',  
-                        combine_docs_chain_kwargs={'prompt':qa_prompt},
-                        verbose=True
+                        llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
                             
-                        )
+                        vector_store = st.session_state.vs
+                        retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 5})
+                            
+                        memory = ConversationBufferMemory(memory_key='chat_history',return_messages=True)
                         
+
+
+                        system_template = r'''
+
+                        Use the following pieces of context to answer the user's question.
+
+                        Context:```{context}```
+
+                        '''
+
+
+                        user_template = '''
+
+                        Question: ```{question}```
+                        Chat History: ```{chat_history}```
+                        '''
+
+                        messages = [
+                            SystemMessagePromptTemplate.from_template(system_template),
+                            HumanMessagePromptTemplate.from_template(user_template)
+                        ]
+
                         
-                    audio = st.radio("AI voice assistant", ("ON", "OFF"))
+                        qa_prompt = ChatPromptTemplate.from_messages(messages)
 
-                    question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
+                        
 
-                    col1, col2 =st.columns([2,12])
-
-                    with col1:
-                        ans = st.button("Answer")
-                    with col2:
-                        # audi = st.button("Tap and Ask")  
-                        audi = audio_recorder()
-
-                    # if ans or audi:
-
-                    if ans:
-
-                        with st.spinner('Generating answer........'):
-                                    
-                            answer = ask_question(question,crc)
-                            flag = True
+                        crc = ConversationalRetrievalChain.from_llm(
+                            llm = llm,
+                            retriever = retriever,
+                            memory = memory,
+                            chain_type='stuff',  
+                            combine_docs_chain_kwargs={'prompt':qa_prompt},
+                            verbose=True
                                 
+                            )
+                            
+                            
+                        audio = st.radio("AI voice assistant", ("ON", "OFF"))
 
-                    elif audi:
+                        question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
 
-                        recorded_file = "RAG_Gemini_Chromadb_app/record.mp3"
-                        with open(recorded_file,"wb") as f:
-                            f.write(audi)
+                        col1, col2 =st.columns([2,12])
 
-                        #     with st.spinner('Listening..........'):
+                        with col1:
+                            ans = st.button("Answer")
+                        with col2:
+                            # audi = st.button("Tap and Ask")  
+                            audi = audio_recorder()
 
-                        #         # st.write('Listining.......')
-                        question = speech_to_text()
+                        # if ans or audi:
 
-                        st.write(question)
+                        if ans:
 
-                        with st.spinner('Generating answer.........'):
+                            with st.spinner('Generating answer........'):
+                                        
+                                answer = ask_question(question,crc)
+                                flag = True
+                                    
 
-                            answer = ask_question(question,crc)
-                            flag=True
-                    if audio == "ON" and flag:
+                        elif audi:
 
-                        st.text_area('Answer : ',value=answer["answer"],height=200)
-                        if flag:
-                            generate_audio(answer["answer"])
-                            flag=False
+                            recorded_file = "RAG_Gemini_Chromadb_app/record.mp3"
+                            with open(recorded_file,"wb") as f:
+                                f.write(audi)
 
-                    else:
+                            #     with st.spinner('Listening..........'):
 
-                        st.text_area('Answer : ',value=answer["answer"],height=200) 
+                            #         # st.write('Listining.......')
+                            question = speech_to_text()
 
-                    st.divider()
-                    if 'history' not in st.session_state:
-                        st.session_state.history = '' 
-                    value = f'Q : {question} \nA : {answer["answer"]}'
-                    st.session_state.history = f'{value} \n {"--"*64} \n {st.session_state.history}'
-                    h = st.session_state.history  
-                    st.text_area(label='Chat History',value=h,key='history',height=500)  
+                            st.write(question)
+
+                            with st.spinner('Generating answer.........'):
+
+                                answer = ask_question(question,crc)
+                                flag=True
+                        if audio == "ON" and flag:
+
+                            st.text_area('Answer : ',value=answer["answer"],height=200)
+                            if flag:
+                                generate_audio(answer["answer"])
+                                flag=False
+
+                        else:
+
+                            st.text_area('Answer : ',value=answer["answer"],height=200) 
+
+                        st.divider()
+                        if 'history' not in st.session_state:
+                            st.session_state.history = '' 
+                        value = f'Q : {question} \nA : {answer["answer"]}'
+                        st.session_state.history = f'{value} \n {"--"*64} \n {st.session_state.history}'
+                        h = st.session_state.history  
+                        st.text_area(label='Chat History',value=h,key='history',height=500)  
 
 
     except:
