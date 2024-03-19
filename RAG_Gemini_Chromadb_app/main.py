@@ -148,6 +148,7 @@ def generate_audio(text):
         audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
         audio_tag = f'<audio src="data:audio/mp3;base64,{audio_base64}" controls autoplay>'
         st.markdown(audio_tag, unsafe_allow_html=True)
+        os.remove("RAG_Gemini_Chromadb_app/output.mp3")
     except:
         print('failed')
         pass
@@ -223,9 +224,9 @@ if  __name__ == "__main__":
 
 
     with st.sidebar:
-        st.write("Try for free!,without your api_key")
-        st.write("In case of error get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)")
-        API_KEY = st.text_input('Your Gemini API key  ',type='password',)
+        st.write('<span style="color:green; font-weight:bolder;">Try for free!,without your api_key', unsafe_allow_html=True)
+        st.write('<span style="color:green; font-weight:bolder;">In case of error get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)', unsafe_allow_html=True)
+        API_KEY = st.text_input('Your Gemini API key  ',type='password')
         if API_KEY:
             api_key = API_KEY
         else:
