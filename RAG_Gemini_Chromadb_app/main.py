@@ -226,7 +226,7 @@ if  __name__ == "__main__":
 
 
     with st.sidebar:
-        st.write('<span style="color:red; font-weight:bolder;">Beta version:not ideal for mobile use', unsafe_allow_html=True)
+        st.write('<span style="color:red; font-weight:bolder;">Beta version,not ideal for mobile use', unsafe_allow_html=True)
         st.write('<span style="color:green; font-weight:bolder;">Try for free!,without your api_key', unsafe_allow_html=True)
         st.write('<span style="color:green; font-weight:bolder;">In case of error get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)', unsafe_allow_html=True)
         API_KEY = st.text_input('Your Gemini API key  ',type='password')
