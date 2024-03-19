@@ -227,7 +227,7 @@ if  __name__ == "__main__":
 
     with st.sidebar:
         st.write('<span style="color:red; font-weight:bolder;">Beta version,not ideal for mobile use', unsafe_allow_html=True)
-        st.write('<span style="color:green; font-weight:bolder;">Try for free!,without your api_key', unsafe_allow_html=True)
+        st.write('<span style="color:green; font-size:1vw; font-weight:bolder;">Try for free!,without your api_key', unsafe_allow_html=True)
         st.write('<span style="color:green; font-weight:bolder;">In case of error get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)', unsafe_allow_html=True)
         API_KEY = st.text_input('Your Gemini API key  ',type='password',placeholder='************************')
         if API_KEY:
@@ -236,6 +236,8 @@ if  __name__ == "__main__":
             api_key = key    
 
         uploaded_file = st.file_uploader('Upload a file',type=['pdf','docx','txt'])
+
+        st.write('<span style="color:red; font-weight:bolder;">or', unsafe_allow_html=True)
 
         youtube_link = st.text_input("Paste YouTube or website Link Here ")
        
