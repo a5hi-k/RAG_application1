@@ -127,10 +127,10 @@ def speech_to_text():
         return text
     except sr.UnknownValueError:
         st.write("Sorry, I could not understand audio.")
-        return ""
+        pass
     except sr.RequestError as e:
         st.write(f"Could not request results from Google Speech Recognition service,Try typing queries; {e}")
-        return ""
+        pass
 
 
 
@@ -200,6 +200,10 @@ if  __name__ == "__main__":
         background-image: url("data:image/png;base64,%s");
          background-position: right;
     }
+    @media screen and (max-width: 768px) {
+        .main {
+            background-size: 800px; 
+        }
   
     </style>
     """ % (img1,img2),
@@ -207,9 +211,9 @@ if  __name__ == "__main__":
     )
 
     
-    st.write('<span style="font-size:8vw; font-weight:bolder; margin-left:-9vw; background: linear-gradient(45deg, #2c3e50, #4ca1af); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">aASKio', unsafe_allow_html=True)
+    st.write('<span style="font-size:8vw; font-weight:bolder; margin-left:-7vw; background: linear-gradient(45deg, #2c3e50, #4ca1af); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">aASKio', unsafe_allow_html=True)
 
-    st.write('<span style="font-size:3.5vw; margin-left:-9vw; font-weight:bolder; background: linear-gradient(45deg, #3CA55C, #B5AC49); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Chat with Youtube, Websites and Documents', unsafe_allow_html=True)
+    st.write('<span style="font-size:3.5vw; margin-left:-2vw; font-weight:bolder; background: linear-gradient(45deg, #3CA55C, #B5AC49); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Chat with Youtube Websites and Documents', unsafe_allow_html=True)
 
 
 
