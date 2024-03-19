@@ -177,6 +177,11 @@ def clear_history():
 
 if  __name__ == "__main__":
 
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv(), override=True)
+
+    key=os.environ.get('GEMINI_API_KEY')
+
     
     @st.cache_data
     def get_img_as_base64(file):
@@ -218,10 +223,13 @@ if  __name__ == "__main__":
 
 
     with st.sidebar:
-        st.write("Get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)")
+        st.write("Try for free!,without your api_key")
+        st.write("In case of error get your api key here [Google Gemini](https://aistudio.google.com/app/apikey)")
         API_KEY = st.text_input('Your Gemini API key  ',type='password',)
         if API_KEY:
             api_key = API_KEY
+        else:
+            api_key = key    
 
         uploaded_file = st.file_uploader('Upload a file',type=['pdf','docx','txt'])
 
@@ -446,6 +454,7 @@ if  __name__ == "__main__":
                             with st.spinner('Generating answer........'):
                                     
                                 answer = ask_question(question,crc)
+                                flag = True
                                 
 
                         elif audi:
@@ -464,11 +473,13 @@ if  __name__ == "__main__":
                             with st.spinner('Generating answer.........'):
 
                                 answer = ask_question(question,crc)
-
-                        if audio == "ON":
+                                flag=True
+                        if audio == "ON" and flag:
 
                             st.text_area('Answer : ',value=answer["answer"],height=200)
-                            generate_audio(answer["answer"])
+                            if flag:
+                                generate_audio(answer["answer"])
+                                flag=False
 
                         else:
 
