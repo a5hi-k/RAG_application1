@@ -1,4 +1,4 @@
-dotenv
+python-dotenv
 audio_recorder_streamlit
 qdrant-client
 pysqlite3-binary
