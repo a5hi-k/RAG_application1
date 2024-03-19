@@ -391,108 +391,108 @@ if  __name__ == "__main__":
     
     try:
                      
-                        llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
+                    llm = ChatGoogleGenerativeAI(model='gemini-pro',temperature=0,google_api_key=api_key,convert_system_message_to_human=True)
                         
-                        vector_store = st.session_state.vs
-                        retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 5})
+                    vector_store = st.session_state.vs
+                    retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': 5})
                         
-                        memory = ConversationBufferMemory(memory_key='chat_history',return_messages=True)
+                    memory = ConversationBufferMemory(memory_key='chat_history',return_messages=True)
                     
 
 
-                        system_template = r'''
+                    system_template = r'''
 
-                        Use the following pieces of context to answer the user's question.
+                    Use the following pieces of context to answer the user's question.
 
-                        Context:```{context}```
+                    Context:```{context}```
 
-                        '''
+                    '''
 
 
-                        user_template = '''
+                    user_template = '''
 
-                        Question: ```{question}```
-                        Chat History: ```{chat_history}```
-                        '''
+                    Question: ```{question}```
+                    Chat History: ```{chat_history}```
+                    '''
 
-                        messages = [
-                            SystemMessagePromptTemplate.from_template(system_template),
-                            HumanMessagePromptTemplate.from_template(user_template)
-                        ]
-
-                    
-                        qa_prompt = ChatPromptTemplate.from_messages(messages)
+                    messages = [
+                        SystemMessagePromptTemplate.from_template(system_template),
+                        HumanMessagePromptTemplate.from_template(user_template)
+                    ]
 
                     
+                    qa_prompt = ChatPromptTemplate.from_messages(messages)
 
-                        crc = ConversationalRetrievalChain.from_llm(
-                            llm = llm,
-                            retriever = retriever,
-                            memory = memory,
-                            chain_type='stuff',  
-                            combine_docs_chain_kwargs={'prompt':qa_prompt},
-                            verbose=True
+                    
+
+                    crc = ConversationalRetrievalChain.from_llm(
+                        llm = llm,
+                        retriever = retriever,
+                        memory = memory,
+                        chain_type='stuff',  
+                        combine_docs_chain_kwargs={'prompt':qa_prompt},
+                        verbose=True
                             
-                            )
+                        )
                         
                         
-                        audio = st.radio("AI voice assistant", ("ON", "OFF"))
+                    audio = st.radio("AI voice assistant", ("ON", "OFF"))
 
-                        question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
+                    question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
 
-                        col1, col2 =st.columns([2,12])
+                    col1, col2 =st.columns([2,12])
 
-                        with col1:
-                            ans = st.button("Answer")
-                        with col2:
-                            # audi = st.button("Tap and Ask")  
-                            audi = audio_recorder()
+                    with col1:
+                        ans = st.button("Answer")
+                    with col2:
+                        # audi = st.button("Tap and Ask")  
+                        audi = audio_recorder()
 
-                        # if ans or audi:
+                    # if ans or audi:
 
-                        if ans:
+                    if ans:
 
-                            with st.spinner('Generating answer........'):
+                        with st.spinner('Generating answer........'):
                                     
-                                answer = ask_question(question,crc)
-                                flag = True
+                            answer = ask_question(question,crc)
+                            flag = True
                                 
 
-                        elif audi:
+                    elif audi:
 
-                            recorded_file = "RAG_Gemini_Chromadb_app/record.mp3"
-                            with open(recorded_file,"wb") as f:
-                                f.write(audi)
+                        recorded_file = "RAG_Gemini_Chromadb_app/record.mp3"
+                        with open(recorded_file,"wb") as f:
+                            f.write(audi)
 
-                            #     with st.spinner('Listening..........'):
+                        #     with st.spinner('Listening..........'):
 
-                            #         # st.write('Listining.......')
-                            question = speech_to_text()
+                        #         # st.write('Listining.......')
+                        question = speech_to_text()
 
-                            st.write(question)
+                        st.write(question)
 
-                            with st.spinner('Generating answer.........'):
+                        with st.spinner('Generating answer.........'):
 
-                                answer = ask_question(question,crc)
-                                flag=True
-                        if audio == "ON" and flag:
+                            answer = ask_question(question,crc)
+                            flag=True
+                    if audio == "ON" and flag:
 
-                            st.text_area('Answer : ',value=answer["answer"],height=200)
-                            if flag:
-                                generate_audio(answer["answer"])
-                                flag=False
+                        st.text_area('Answer : ',value=answer["answer"],height=200)
+                        if flag:
+                            generate_audio(answer["answer"])
+                            flag=False
 
-                        else:
+                    else:
 
-                            st.text_area('Answer : ',value=answer["answer"],height=200) 
+                        st.text_area('Answer : ',value=answer["answer"],height=200) 
 
-                        st.divider()
-                        if 'history' not in st.session_state:
-                            st.session_state.history = '' 
-                        value = f'Q : {question} \nA : {answer["answer"]}'
-                        st.session_state.history = f'{value} \n {"--"*64} \n {st.session_state.history}'
-                        h = st.session_state.history  
-                        st.text_area(label='Chat History',value=h,key='history',height=500)  
+                    st.divider()
+                    if 'history' not in st.session_state:
+                        st.session_state.history = '' 
+                    value = f'Q : {question} \nA : {answer["answer"]}'
+                    st.session_state.history = f'{value} \n {"--"*64} \n {st.session_state.history}'
+                    h = st.session_state.history  
+                    st.text_area(label='Chat History',value=h,key='history',height=500)  
 
 
     except:
