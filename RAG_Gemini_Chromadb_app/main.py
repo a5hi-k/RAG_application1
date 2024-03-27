@@ -443,19 +443,19 @@ if  __name__ == "__main__":
                             
                         audio = st.radio("AI voice assistant", ("ON", "OFF"))
 
-                        question = st.text_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)') 
+                        question = st.chat_input('Chat with the uploaded data:(refer as "this text" in case of confused answers)')
 
-                        col1, col2 =st.columns([2,12])
+                        # col1, col2 =st.columns([2,12])
 
-                        with col1:
-                            ans = st.button("Answer text input")
-                        with col2:
-                            # audi = st.button("Tap and Ask")  
-                            audi = audio_recorder()
+                        # with col1:
+                        #     ans = st.button("Answer text input")
+                        # with col2:
+                        #     # audi = st.button("Tap and Ask")  
+                        audi = audio_recorder()
 
                         # if ans or audi:
 
-                        if ans:
+                        if question:
 
                             with st.spinner('Generating answer........'):
                                         
